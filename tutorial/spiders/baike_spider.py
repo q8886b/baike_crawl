@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
+import sys
 from tutorial.items import DmozItem
 
 class BaikeSpider(scrapy.Spider):
     name = "baike"
     allowed_domains = ["baike.baidu.com"]
     start_urls = [
-        "http://www.baike.baidu.com/item/麻黄",
+        "http://www.baike.baidu.com/item/南瓜花",
     ]
 
 
@@ -75,11 +76,22 @@ class BaikeSpider(scrapy.Spider):
             print remove_white("".join(value_data)).encode('utf-8')
             print title_num
             for j in range(1, title_num+1):
+                intersect = lambda upper, lower : upper + "[count(.|" + lower + ") = count(" + lower + ")]"
                 title_data = response.xpath(f_title(i) + f_num(j) +  suffix2).extract()
-                #value_data = response.xpath(f_data(i,j) + suffix3).extract()
+                upper = f_title(i) + f_num(j) + "/parent::*/following-sibling::*"
+                if j < title_num:
+                    lower = f_title(i) + f_num(j+1) + "/parent::*/preceding-sibling::*"
+                elif j == title_num and i < key_num:
+                    lower = "//div[@class='para-title level-2']" + f_num(i+1) + "/preceding-sibling::*"
+                else:
+                    lower = None
+                if lower == None:
+                    value_data = response.xpath(upper+"[@class='para']"+suffix3).extract()
+                else:
+                    value_data = response.xpath(intersect(upper,lower)+suffix3).extract()
                 if (title_data == []):
                     break
-                print "".join(title_data).encode('utf-8')
-                #print "".join(value_data).encode('utf-8')
+                print remove_white("".join(title_data)).encode('utf-8')
+                print remove_white("".join(value_data)).encode('utf-8')
             print "\n"
 
