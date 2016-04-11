@@ -5,7 +5,7 @@ with open('../1.csv', 'rb') as csvfile, open('../2.csv', 'wb') as writefile:
     spamreader = csv.reader(csvfile, delimiter=',')
     s = set([])
     for row in spamreader:
-        str = ",".join(row).replace("?", "")
+        str = ",".join(row).replace("?", "").replace("。","")
         if str.find("？") == None:
             continue
         s.add(str)

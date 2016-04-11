@@ -8,7 +8,7 @@ class BaikeSpider(scrapy.Spider):
     name = "baike"
     allowed_domains = ["baike.baidu.com"]
     start_urls = [
-        "http://www.baike.baidu.com/item/南瓜花",
+        "http://www.baike.baidu.com/item/大补肾汤",
     ]
 
 
@@ -64,34 +64,37 @@ class BaikeSpider(scrapy.Spider):
             "count(preceding::div[@class='para-title level-2'])=" + str(n) + "]"
         f_title = lambda n : "(//div[@class='para-title level-2'][" + str(n) + "]/following::*/descendant-or-self::*" \
             "[self::h3 and count(preceding::div[@class='para-title level-2'])=" + str(n) + "])"
-        f_data = lambda n, m : "(" + f_title(n,m) + "/parent::*/following::*/descendant-or-self::*" \
-            "[(@class='para' or self::a) and not(self::h2) and not(self::h3)] intersect " + \
-            f_title(n,m+1) + "/parent::*/preceding::*/descendant-or-self::*" + ")"
         key_num = int(float("".join(response.xpath("count(//div[@class='para-title level-2'])").extract())))
         for i in range(1, key_num+1):
             key_data = response.xpath(f2(i) + suffix2).extract()
-            value_data = response.xpath(f3(i) + suffix3).extract()
-            title_num = int(float("".join(response.xpath("count(" + f_title(i) + ")").extract())))
             print remove_white("".join(key_data)).encode('utf-8')
-            print remove_white("".join(value_data)).encode('utf-8')
-            print title_num
-            for j in range(1, title_num+1):
-                intersect = lambda upper, lower : upper + "[count(.|" + lower + ") = count(" + lower + ")]"
-                title_data = response.xpath(f_title(i) + f_num(j) +  suffix2).extract()
-                upper = f_title(i) + f_num(j) + "/parent::*/following-sibling::*"
-                if j < title_num:
-                    lower = f_title(i) + f_num(j+1) + "/parent::*/preceding-sibling::*"
-                elif j == title_num and i < key_num:
-                    lower = "//div[@class='para-title level-2']" + f_num(i+1) + "/preceding-sibling::*"
-                else:
-                    lower = None
-                if lower == None:
-                    value_data = response.xpath(upper+"[@class='para']"+suffix3).extract()
-                else:
-                    value_data = response.xpath(intersect(upper,lower)+suffix3).extract()
-                if (title_data == []):
-                    break
-                print remove_white("".join(title_data)).encode('utf-8')
+            title_num = int(float("".join(response.xpath("count(" + f_title(i) + ")").extract())))
+            if title_num == 0:
+                value_data = response.xpath(f3(i) + suffix3).extract()
                 print remove_white("".join(value_data)).encode('utf-8')
+            else:
+                for j in range(1, title_num+1):
+                    intersect = lambda upper, lower : upper + "[count(.|" + lower + ") = count(" + lower + ")]"
+                    title_data = response.xpath(f_title(i) + f_num(j) +  suffix2).extract()
+                    upper = f_title(i) + f_num(j) + "/parent::*/following-sibling::*"
+                    if j < title_num:
+                        lower = f_title(i) + f_num(j+1) + "/parent::*/preceding-sibling::*"
+                    elif j == title_num and i < key_num:
+                        lower = "//div[@class='para-title level-2']" + f_num(i+1) + "/preceding-sibling::*"
+                    else:
+                        lower = None
+                    if lower == None:
+                        value_data = response.xpath(upper+"[@class='para']"+suffix3).extract()
+                    else:
+                        value_data = response.xpath(intersect(upper,lower)+suffix3).extract()
+                    if (title_data == []):
+                        break
+                    print remove_white("".join(title_data)).encode('utf-8')
+                    print remove_white("".join(value_data)).encode('utf-8')
             print "\n"
+
+        #onlyPara
+        onlyPara = "//div[@label-module='para']"
+        onlyPara_data = response.xpath(onlyPara + suffix3).extract()
+        print remove_white("".join(onlyPara_data)).encode('utf-8')
 
