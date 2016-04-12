@@ -14,7 +14,7 @@ class BaikeSpider(scrapy.Spider):
 
     def parse(self, response):
         item = BaikeItem()
-        item['item'] = urllib.unquote(response.url.split('/')[-1])
+        item['item'] = urllib.unquote(response.request.url.split('/')[-1])
         print item['item']
 
         suffix1 = "/descendant-or-self::*/text()"
