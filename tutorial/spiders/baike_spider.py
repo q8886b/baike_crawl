@@ -2,32 +2,21 @@
 import scrapy
 import re
 import sys
-from tutorial.items import DmozItem
+import urllib
+from tutorial.items import BaikeItem
 
 class BaikeSpider(scrapy.Spider):
     name = "baike"
     allowed_domains = ["baike.baidu.com"]
-    start_urls = [
-        "http://www.baike.baidu.com/item/大补肾汤",
-    ]
-
-
-    # def parse(self, response):
-    #     for href in response.css("ul.directory.dir-col > li > a::attr('href')"):
-    #         print response.url, href.extract()
-    #         url = response.urljoin(href.extract())
-    #         yield scrapy.Request(url, callback=self.parse_dir_contents)
-    #
-    # def parse_dir_contents(self, response):
-    #     for sel in response.xpath('//ul/li'):
-    #         item = DmozItem()
-    #         item['title'] = sel.xpath('a/text()').extract()
-    #         item['link'] = sel.xpath('a/@href').extract()
-    #         item['desc'] = sel.xpath('text()').extract()
-    #         yield item
-
+    file = open("medicine.url")
+    start_urls = [url.strip() for url in file.readlines()]
+    file.close()
 
     def parse(self, response):
+        item = BaikeItem()
+        item['item'] = urllib.unquote(response.url.split('/')[-1])
+        print item['item']
+
         suffix1 = "/descendant-or-self::*/text()"
         suffix2 = "/text()"
         suffix3 = "/descendant-or-self::*[not(self::span) and not(@class='image-link') and not(self::sup)]/text()"
@@ -35,7 +24,10 @@ class BaikeSpider(scrapy.Spider):
 
         #introduce
         introduce = response.xpath("//div[@class='lemma-summary']/div[@class='para']"+suffix1).extract()
-        print "".join(introduce).encode('utf-8')
+        # print "".join(introduce).encode('utf-8')
+        item['attribute'] = '简介'
+        item['value'] = "".join(introduce).encode('utf-8')
+        yield item
 
         #basicInfo
         f_num = lambda n : "[" + str(n) + "]"
@@ -51,11 +43,13 @@ class BaikeSpider(scrapy.Spider):
                 value_data = response.xpath(value + f_num(i) + suffix1).extract()
                 if key_data == []:
                     break
-                print  "".join(key_data).replace(u"\xa0", "").strip().encode('utf-8')
-                print  "".join(value_data).replace(u"\xa0", "").strip().encode('utf-8')
+                # print  "".join(key_data).replace(u"\xa0", "").strip().encode('utf-8')
+                # print  "".join(value_data).replace(u"\xa0", "").strip().encode('utf-8')
+                item['attribute'] = "".join(key_data).replace(u"\xa0", "").strip().encode('utf-8')
+                item['value'] = "".join(value_data).replace(u"\xa0", "").strip().encode('utf-8')
+                yield item
         basic_kv(basic_key_left, basic_value_left)
         basic_kv(basic_key_right, basic_value_right)
-        print "\n"
 
         #detailPara
         f2 = lambda n : "//div[@class='para-title level-2'][" + str(n) + "]/h2[@class='title-text']"
@@ -67,11 +61,14 @@ class BaikeSpider(scrapy.Spider):
         key_num = int(float("".join(response.xpath("count(//div[@class='para-title level-2'])").extract())))
         for i in range(1, key_num+1):
             key_data = response.xpath(f2(i) + suffix2).extract()
-            print remove_white("".join(key_data)).encode('utf-8')
+            # print remove_white("".join(key_data)).encode('utf-8')
             title_num = int(float("".join(response.xpath("count(" + f_title(i) + ")").extract())))
             if title_num == 0:
                 value_data = response.xpath(f3(i) + suffix3).extract()
-                print remove_white("".join(value_data)).encode('utf-8')
+                # print remove_white("".join(value_data)).encode('utf-8')
+                item['attribute'] = remove_white("".join(key_data)).encode('utf-8')
+                item['value'] = remove_white("".join(value_data)).encode('utf-8')
+                yield item
             else:
                 for j in range(1, title_num+1):
                     intersect = lambda upper, lower : upper + "[count(.|" + lower + ") = count(" + lower + ")]"
@@ -89,12 +86,19 @@ class BaikeSpider(scrapy.Spider):
                         value_data = response.xpath(intersect(upper,lower)+suffix3).extract()
                     if (title_data == []):
                         break
-                    print remove_white("".join(title_data)).encode('utf-8')
-                    print remove_white("".join(value_data)).encode('utf-8')
-            print "\n"
+                    # print remove_white("".join(title_data)).encode('utf-8')
+                    # print remove_white("".join(value_data)).encode('utf-8')
+                    item['attribute'] = remove_white("".join(key_data)).encode('utf-8') + \
+                                        remove_white("".join(title_data)).encode('utf-8')
+                    item['value'] = remove_white("".join(value_data)).encode('utf-8')
+                    yield item
 
         #onlyPara
-        onlyPara = "//div[@label-module='para']"
-        onlyPara_data = response.xpath(onlyPara + suffix3).extract()
-        print remove_white("".join(onlyPara_data)).encode('utf-8')
+        if key_num == 0:
+            onlyPara = "//div[@label-module='para']"
+            onlyPara_data = response.xpath(onlyPara + suffix3).extract()
+            # print remove_white("".join(onlyPara_data)).encode('utf-8')
+            item['attribute'] = '资料'
+            item['value'] = remove_white("".join(onlyPara_data)).encode('utf-8')
+            yield item
 

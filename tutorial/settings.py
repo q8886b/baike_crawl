@@ -14,6 +14,14 @@ BOT_NAME = 'tutorial'
 SPIDER_MODULES = ['tutorial.spiders']
 NEWSPIDER_MODULE = 'tutorial.spiders'
 
+#Database settings
+DB_HOST = 'localhost'
+DB_PORT = 3306
+DB_USER = 'root'
+DB_PASSWD = '123456'
+DB_DB = 'graduate'
+
+LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
@@ -61,9 +69,9 @@ NEWSPIDER_MODULE = 'tutorial.spiders'
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'tutorial.pipelines.SomePipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'tutorial.pipelines.MySQLPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
