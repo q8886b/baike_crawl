@@ -8,9 +8,10 @@ from tutorial.items import BaikeItem
 class BaikeSpider(scrapy.Spider):
     name = "baike"
     allowed_domains = ["baike.baidu.com"]
-    file = open("medicine.url")
-    start_urls = [url.strip() for url in file.readlines()]
-    file.close()
+    # file = open("medicine.url")
+    # start_urls = [url.strip() for url in file.readlines()]
+    # file.close()
+    start_urls = ["http://www.baike.baidu.com/item/乌发丸"]
 
     def parse(self, response):
         item = BaikeItem()
@@ -24,7 +25,7 @@ class BaikeSpider(scrapy.Spider):
 
         #introduce
         introduce = response.xpath("//div[@class='lemma-summary']/div[@class='para']"+suffix1).extract()
-        # print "".join(introduce).encode('utf-8')
+        print "".join(introduce).encode('utf-8')
         item['attribute'] = '真简介'
         item['value'] = "".join(introduce).encode('utf-8')
         yield item
@@ -43,8 +44,8 @@ class BaikeSpider(scrapy.Spider):
                 value_data = response.xpath(value + f_num(i) + suffix1).extract()
                 if key_data == []:
                     break
-                # print  "".join(key_data).replace(u"\xa0", "").strip().encode('utf-8')
-                # print  "".join(value_data).replace(u"\xa0", "").strip().encode('utf-8')
+                print  "".join(key_data).replace(u"\xa0", "").strip().encode('utf-8')
+                print  "".join(value_data).replace(u"\xa0", "").strip().encode('utf-8')
                 item['attribute'] = "".join(key_data).replace(u"\xa0", "").strip().encode('utf-8')
                 item['value'] = "".join(value_data).replace(u"\xa0", "").strip().encode('utf-8')
                 yield item
@@ -61,11 +62,11 @@ class BaikeSpider(scrapy.Spider):
         key_num = int(float("".join(response.xpath("count(//div[@class='para-title level-2'])").extract())))
         for i in range(1, key_num+1):
             key_data = response.xpath(f2(i) + suffix2).extract()
-            # print remove_white("".join(key_data)).encode('utf-8')
+            print remove_white("".join(key_data)).encode('utf-8')
             title_num = int(float("".join(response.xpath("count(" + f_title(i) + ")").extract())))
             if title_num == 0:
                 value_data = response.xpath(f3(i) + suffix3).extract()
-                # print remove_white("".join(value_data)).encode('utf-8')
+                print remove_white("".join(value_data)).encode('utf-8')
                 item['attribute'] = remove_white("".join(key_data)).encode('utf-8')
                 item['value'] = remove_white("".join(value_data)).encode('utf-8')
                 yield item
@@ -86,8 +87,8 @@ class BaikeSpider(scrapy.Spider):
                         value_data = response.xpath(intersect(upper,lower)+suffix3).extract()
                     if (title_data == []):
                         break
-                    # print remove_white("".join(title_data)).encode('utf-8')
-                    # print remove_white("".join(value_data)).encode('utf-8')
+                    print remove_white("".join(title_data)).encode('utf-8')
+                    print remove_white("".join(value_data)).encode('utf-8')
                     item['attribute'] = remove_white("".join(key_data)).encode('utf-8') + \
                                         remove_white("".join(title_data)).encode('utf-8')
                     item['value'] = remove_white("".join(value_data)).encode('utf-8')
@@ -97,7 +98,7 @@ class BaikeSpider(scrapy.Spider):
         if key_num == 0:
             onlyPara = "//div[@label-module='para']"
             onlyPara_data = response.xpath(onlyPara + suffix3).extract()
-            # print remove_white("".join(onlyPara_data)).encode('utf-8')
+            print remove_white("".join(onlyPara_data)).encode('utf-8')
             item['attribute'] = '资料'
             item['value'] = remove_white("".join(onlyPara_data)).encode('utf-8')
             yield item
