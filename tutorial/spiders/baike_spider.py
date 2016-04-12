@@ -25,7 +25,7 @@ class BaikeSpider(scrapy.Spider):
         #introduce
         introduce = response.xpath("//div[@class='lemma-summary']/div[@class='para']"+suffix1).extract()
         # print "".join(introduce).encode('utf-8')
-        item['attribute'] = '简介'
+        item['attribute'] = '真简介'
         item['value'] = "".join(introduce).encode('utf-8')
         yield item
 
