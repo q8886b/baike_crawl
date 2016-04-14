@@ -7,11 +7,6 @@
 
 import scrapy
 
-class DmozItem(scrapy.Item):
-     title = scrapy.Field()
-     link = scrapy.Field()
-     desc = scrapy.Field()
-
 class BaikeItem(scrapy.Item):
      item = scrapy.Field()
      attribute = scrapy.Field()
