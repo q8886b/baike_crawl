@@ -130,6 +130,22 @@ with open("data/kv_in_value.txt", 'rb') as infile, open("data/kv_in_value_output
                     print sl[1], k
     cur.close()
     db.close()
+
+with open("data/kv_in_value_output.csv", 'rb') as infile:
+    db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
+    cur = db.cursor()
+    spamreader = csv.reader(infile, delimiter=',',quotechar='"')
+    sql = "insert into medicine values (%s, %s, %s)"
+    D = ["一", "二", "三", "四", "五", "六"]
+    keys = []
+    for line in spamreader:
+        key = line[0]+line[1]
+        keys.append(key)
+        if keys.count(key) == 1:
+            cur.execute(sql, [line[0].strip(), '>'+line[1].strip(), line[2].strip()])
+        else:
+            cur.execute(sql, [line[0].strip(), '>'+line[1].strip()+str(keys.count(key)), line[2].strip()])
+        db.commit()
+    cur.close()
+    db.close()
 """
-
-
