@@ -3,6 +3,7 @@ import csv
 import httplib
 import requests
 import re
+import MySQLdb
 
 # original csv to clean csv
 """
@@ -58,26 +59,8 @@ with open('data/item.dic', 'rb') as infile:
 			print "count: " + str(count)
 """
 
-
-# database get attribute from value
-def kv_parse(total):
-    rsuit = u"【[^】]*】[^【]*"
-    sl = re.findall(rsuit, total, re.UNICODE)
-
-    rkey = u"【[^】]*】"
-    M = {}
-    for s in sl:
-        key = re.findall(rkey, s, re.UNICODE)[0].strip(u"【】")
-        value = re.split(rkey, s, re.UNICODE)[1]
-        M[key] = value
-    return M
-
-total = u"很好【一】1111[2]二二二耳【3】三十三岁3【四死死4】f四efe"
-m = kv_parse(total)
-for key, value in m.iteritems():
-    print key, value
-
-
+# list duplicate words
+"""
 with open('data/key.txt', 'rb') as infile:
     ss = set()
     ll = []
@@ -90,3 +73,63 @@ with open('data/key.txt', 'rb') as infile:
                 ll.append(s)
     for s in ll:
         print s
+"""
+
+
+# database get attribute from value
+"""
+def kv_parse(total):
+    rsuit = u"【[^】]*】[^【]*"
+    sl = re.findall(rsuit, total, re.UNICODE)
+
+    rkey = u"【[^】]*】"
+    M = {}
+    for s in sl:
+        key = re.findall(rkey, s, re.UNICODE)[0].strip(u"【】")
+        value = re.split(rkey, s, re.UNICODE)[1]
+        M[key] = value
+    return M
+# check whether k is an standard attribute
+def k_in_keys(k, keys):
+    for kk in keys:
+        if k.find(kk) != -1:
+            return True
+    return False
+
+
+with open("data/kv_in_value.txt", 'rb') as infile, open("data/kv_in_value_output.csv", 'wb') as outfile, \
+        open("data/key.txt", 'rb') as keyfile:
+    # 1 keys
+    keys = set()
+    for line in keyfile:
+        line = line.decode('utf-8')
+        sl = line.strip().split()
+        for s in sl:
+            keys.add(s)
+    # 2 csv file
+    csvwriter = csv.writer(outfile)
+    # 3 mysql
+    db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
+    cur = db.cursor()
+    cur.execute('select * from medicine')
+    row = cur.fetchone()
+
+    for line in infile:
+        line = line.decode('utf-8')
+        sl = line.split(u'\t')
+        if len(sl) == 3:
+            m = kv_parse(sl[2])
+            for k, v in m.iteritems():
+                if k_in_keys(k, keys):
+                    sql = "delete from medicine where item = %s and attribute = %s;"
+                    cur.execute(sql, [sl[0].encode('utf-8'), sl[1].encode('utf-8')])
+                    db.commit()
+                    writeline = [sl[0].encode('utf-8'), k.encode('utf-8'), v.encode('utf-8')]
+                    csvwriter.writerow(writeline)
+                else:
+                    print sl[1], k
+    cur.close()
+    db.close()
+"""
+
+
