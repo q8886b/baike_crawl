@@ -2,12 +2,19 @@
 import csv
 import re
 import MySQLdb
+import os
+import sys
+import urllib
+
+if os.getcwd().split('/')[-1] == 'public':
+    os.chdir("../../")
 
 ATTR_NUM = 15
 ITEM_NOT_FOUND = u"找不到您说的中草药哦～"
 ATTR_NOT_FOUND = u"找不到答案哦～"
-input = u"菟丝子枸杞子覆盆子女贞子桑葚子茶男人可以喝吗"
+input = urllib.unquote(sys.argv[1]).decode('utf-8')
 output = u""
+
 
 attrs = [set() for x in xrange(ATTR_NUM)]
 with open("data/key.txt", 'rb') as infile:
@@ -61,7 +68,8 @@ else:
             attr = answer.split('@')[0]
             value = answer.split('@')[1]
             output += item + u"的" + attr + u": " + value + u"\n"
-print output
+print output.encode('utf-8')
+
 
 
 

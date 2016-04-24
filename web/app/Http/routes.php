@@ -15,3 +15,5 @@ $app->get('/', function () use ($app) {
     return view('ask');
 });
 
+$app->get('answer/{question}', 'AnswerController@index');
+
