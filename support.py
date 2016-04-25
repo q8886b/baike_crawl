@@ -149,3 +149,70 @@ with open("data/kv_in_value_output.csv", 'rb') as infile:
     cur.close()
     db.close()
 """
+
+# export to table medicine_simple, create table attribute_set
+# attribute sample: 1简介　2功用　3制备　4用法　5别名　６性味　７来源　８鉴定　９生态环境  10成分
+#                   11归经 12培育 13毒性 14禁忌 15文化
+
+
+db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
+cur_r = db.cursor()
+cur_w = db.cursor()
+ATTR_NUM = 15
+attrs = [set() for x in xrange(ATTR_NUM)]
+with open("data/key.txt", 'rb') as infile:
+    for i in range(15):
+        line = infile.readline().decode('utf-8')
+        for word in line.split():
+            attrs[i].add(word)
+attrs_sample = [u'简介', u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
+                u'归经', u'培育', u'毒性', u'禁忌', u'文化']
+black_list = [u'方剂名称']
+write_list = [u'处方来源', u'【处方来源】']
+def find_attr(input):
+    if input in black_list:
+        return set()
+    idx_found = set()
+    for idx in range(ATTR_NUM):
+        for a in attrs[idx]:
+            if input.find(a) != -1:
+                if (input == a) or input in write_list:
+                    idx_found.clear()
+                    idx_found.add(idx)
+                    return idx_found
+                else:
+                    idx_found.add(idx)
+                    break
+    if 0 in idx_found:
+        if len(idx_found) != 1:
+            idx_found.remove(0)
+    return idx_found
+
+sql_r = "select * from medicine"
+cur_r.execute(sql_r)
+sql_w = "insert into medicine_simple values(%s, %s, %s)"
+for row in cur_r:
+    src = find_attr(row[1])
+    for idx in src:
+        cur_w.execute(sql_w, [row[0].encode('utf-8'), attrs_sample[idx].encode('utf-8'), row[2].encode('utf-8')])
+        db.commit()
+
+sql_w = "insert into attributes values(%s, %s)"
+for idx in range(0, ATTR_NUM):
+    for attr in attrs[idx]:
+        cur_w.execute(sql_w, [attrs_sample[idx].encode('utf-8'), attr.encode('utf-8')])
+        db.commit()
+cur_r.close()
+cur_w.close()
+db.close()
+
+
+
+
+
+
+
+
+
+
+
