@@ -4,6 +4,7 @@ import httplib
 import requests
 import re
 import MySQLdb
+import sys
 
 # original csv to clean csv
 """
@@ -154,7 +155,7 @@ with open("data/kv_in_value_output.csv", 'rb') as infile:
 # attribute sample: 1简介　2功用　3制备　4用法　5别名　６性味　７来源　８鉴定　９生态环境  10成分
 #                   11归经 12培育 13毒性 14禁忌 15文化
 
-
+"""
 db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
 cur_r = db.cursor()
 cur_w = db.cursor()
@@ -205,9 +206,54 @@ for idx in range(0, ATTR_NUM):
 cur_r.close()
 cur_w.close()
 db.close()
+"""
 
+# create synonym
+"""
+with open("data/synonym.txt", 'wb') as outfile, open('data/key.txt', 'rb') as keyfile:
+    keys = set()
+    for line in keyfile:
+        line = line.decode('utf-8')
+        sl = line.strip().split()
+        for s in sl:
+            keys.add(s)
 
-
+    db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
+    cur = db.cursor()
+    #from value
+    sql = "select item, value from graduate.medicine where value like %s"
+    cur.execute(sql, ['%别名%'])
+    terminals = [u'。', u'；', u'学名', u'拉丁', u'中文', u'汉语', u'英文', u'是']
+    for key in keys:
+        terminals.append(key)
+    terminals.remove(u'别名')
+    for row in cur:
+        begin = row[1].find(u'别名')
+        end = 0xfffffff
+        for s in terminals:
+            if end > row[1].find(s, begin) and row[1].find(s, begin) != -1:
+                end = row[1].find(s, begin)
+        if end == -1:
+            result = row[1][begin:].encode('utf-8').strip()
+        else:
+            result = row[1][begin:end].encode('utf-8').strip()
+        result = result[6:].decode('utf-8')
+        result = re.sub(u'《.*?》|（.*?）(.*?)', ' ', result)
+        print result
+        results = re.split(u" |，|、|,|：|:|《|（|\(f|》|）|\)", result)
+        result = u" ".join(results).encode('utf-8')
+        outfile.write(row[0].encode('utf-8') + " 　　" + result + '\n')
+    #from attribute
+    sql = "select item, value from graduate.medicine where attribute = '别名'"
+    cur.execute(sql)
+    for row in cur:
+        result = row[1].encode('utf-8').strip().decode('utf-8')
+        result = re.sub(u'《.*?》|（.*?）(.*?)', ' ', result)
+        print result
+        results = re.split(u" |，|、|,|：|:|《|（|\(f|》|）|\)", result)
+        result = u" ".join(results).encode('utf-8')
+        outfile.write(row[0].encode('utf-8') + " 　　" + result + '\n')
+"""
 
 
 
