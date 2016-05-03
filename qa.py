@@ -5,9 +5,11 @@ import MySQLdb
 import os
 import sys
 import urllib
+from qa_support.Dictionary import Dictionary
 
-if os.getcwd().split('/')[-1] == 'public':
-    os.chdir("../../")
+while os.getcwd().split('/')[-1] != 'graduate':
+    os.chdir("../")
+
 
 ATTR_NUM = 15
 ITEM_NOT_FOUND = u"找不到您说的中草药哦～"

@@ -50,7 +50,7 @@ def b_new():
     f_read.next()
 
 def but_save():
-    with open('data/exchange.txt', 'wb') as outfile:
+    with open('../data/exchange.txt', 'wb') as outfile:
         for similars in similar_list:
             for word in similars:
                 print word
@@ -77,7 +77,7 @@ def but_black():
         l_black.insert(END, text)
 
 def read_next():
-    with open('data/attribute.csv', 'rb') as infile:
+    with open('../data/attribute.csv', 'rb') as infile:
         n = 0
         for word in infile:
             n+=1
@@ -87,7 +87,7 @@ def read_next():
                 continue
             v.set(word.strip())
             yield 1
-    with open('data/key.txt', 'wb') as outfile:
+    with open('../data/key.txt', 'wb') as outfile:
         for similars in similar_list:
             for word in similars:
                 print word

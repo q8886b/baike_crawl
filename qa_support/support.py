@@ -25,7 +25,7 @@ with open('../1.csv', 'rb') as csvfile, open('../2.csv', 'wb') as writefile:
 
 # from clean csv file to url
 """
-with open('data/medicine.csv', 'rb') as infile, open('data/medicine.url', 'wb') as outfile:
+with open('../data/medicine.csv', 'rb') as infile, open('../data/medicine.url', 'wb') as outfile:
     url_prefix = "http://www.baike.baidu.com/item/"
     spamreader = csv.reader(infile, delimiter=',')
     for row in spamreader:
@@ -34,7 +34,7 @@ with open('data/medicine.csv', 'rb') as infile, open('data/medicine.url', 'wb') 
 
 # from clean csv file to item dictionary
 """
-with open('data/medicine.csv', 'rb') as infile, open('data/item.dic', 'wb') as outfile:
+with open('../data/medicine.csv', 'rb') as infile, open('../data/item.dic', 'wb') as outfile:
     spamreader = csv.reader(infile, delimiter=',')
     for row in spamreader:
         outfile.write(row[0] + "\n")
@@ -43,7 +43,7 @@ with open('data/medicine.csv', 'rb') as infile, open('data/item.dic', 'wb') as o
 # count valid url from baike.com
 
 """
-with open('data/item.dic', 'rb') as infile:
+with open('../data/item.dic', 'rb') as infile:
 	url_prefix = "http://www.baike.com/wiki/"
 	count = 0
 	total = 0
@@ -62,7 +62,7 @@ with open('data/item.dic', 'rb') as infile:
 
 # list duplicate words
 """
-with open('data/key.txt', 'rb') as infile:
+with open('../data/key.txt', 'rb') as infile:
     ss = set()
     ll = []
     for line in infile:
@@ -98,8 +98,8 @@ def k_in_keys(k, keys):
     return False
 
 
-with open("data/kv_in_value.txt", 'rb') as infile, open("data/kv_in_value_output.csv", 'wb') as outfile, \
-        open("data/key.txt", 'rb') as keyfile:
+with open("../data/kv_in_value.txt", 'rb') as infile, open("../data/kv_in_value_output.csv", 'wb') as outfile, \
+        open("../data/key.txt", 'rb') as keyfile:
     # 1 keys
     keys = set()
     for line in keyfile:
@@ -132,7 +132,7 @@ with open("data/kv_in_value.txt", 'rb') as infile, open("data/kv_in_value_output
     cur.close()
     db.close()
 
-with open("data/kv_in_value_output.csv", 'rb') as infile:
+with open("../data/kv_in_value_output.csv", 'rb') as infile:
     db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
     cur = db.cursor()
     spamreader = csv.reader(infile, delimiter=',',quotechar='"')
@@ -161,7 +161,7 @@ cur_r = db.cursor()
 cur_w = db.cursor()
 ATTR_NUM = 15
 attrs = [set() for x in xrange(ATTR_NUM)]
-with open("data/key.txt", 'rb') as infile:
+with open("../data/key.txt", 'rb') as infile:
     for i in range(15):
         line = infile.readline().decode('utf-8')
         for word in line.split():
@@ -210,7 +210,7 @@ db.close()
 
 # create synonym
 """
-with open("data/synonym.txt", 'wb') as outfile, open('data/key.txt', 'rb') as keyfile:
+with open("../data/synonym.txt", 'wb') as outfile, open('../data/key.txt', 'rb') as keyfile:
     keys = set()
     for line in keyfile:
         line = line.decode('utf-8')
