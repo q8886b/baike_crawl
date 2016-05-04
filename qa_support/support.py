@@ -62,7 +62,7 @@ with open('../data/item.dic', 'rb') as infile:
 
 # list duplicate words
 """
-with open('../data/key.txt', 'rb') as infile:
+with open('../data/attribute_key.txt', 'rb') as infile:
     ss = set()
     ll = []
     for line in infile:
@@ -99,7 +99,7 @@ def k_in_keys(k, keys):
 
 
 with open("../data/kv_in_value.txt", 'rb') as infile, open("../data/kv_in_value_output.csv", 'wb') as outfile, \
-        open("../data/key.txt", 'rb') as keyfile:
+        open("../data/attribute_key.txt", 'rb') as keyfile:
     # 1 keys
     keys = set()
     for line in keyfile:
@@ -161,7 +161,7 @@ cur_r = db.cursor()
 cur_w = db.cursor()
 ATTR_NUM = 15
 attrs = [set() for x in xrange(ATTR_NUM)]
-with open("../data/key.txt", 'rb') as infile:
+with open("../data/attribute_key.txt", 'rb') as infile:
     for i in range(15):
         line = infile.readline().decode('utf-8')
         for word in line.split():
@@ -210,7 +210,7 @@ db.close()
 
 # create synonym
 """
-with open("../data/synonym.txt", 'wb') as outfile, open('../data/key.txt', 'rb') as keyfile:
+with open("../data/item_synonym.txt", 'wb') as outfile, open('../data/attribute_key.txt', 'rb') as keyfile:
     keys = set()
     for line in keyfile:
         line = line.decode('utf-8')
@@ -255,10 +255,34 @@ with open("../data/synonym.txt", 'wb') as outfile, open('../data/key.txt', 'rb')
         outfile.write(row[0].encode('utf-8') + " 　　" + result + '\n')
 """
 
+#create synonym in mysql
 
+"""
+with open("data/item_synonym.txt", 'rb') as infile:
+    items = dict()
+    blacks = set()
+    sa = set()
+    for line in infile:
+        ss = line.decode('utf-8').split()
+        if len(ss) <= 1:
+            continue
+        else:
+            if items.has_key(ss[0]) is False:
+                items[ss[0]] = set()
+            for idx in range(1, len(ss)):
+                if ss[idx] in sa:
+                    blacks.add(ss[idx])
+                if ss[idx] not in blacks:
+                    items[ss[0]].add(ss[idx])
+                    sa.add(ss[idx])
 
-
-
-
-
+    db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
+    cur = db.cursor()
+    sql = "insert into items values(%s, %s)";
+    for k, v in items.iteritems():
+        for sym in v:
+            cur.execute(sql, [k.encode('utf-8'), sym.encode('utf-8')])
+            db.commit()
+    db.close()
+"""
 

@@ -10,7 +10,6 @@ from qa_support.Dictionary import Dictionary
 while os.getcwd().split('/')[-1] != 'graduate':
     os.chdir("../")
 
-
 ATTR_NUM = 15
 ITEM_NOT_FOUND = u"找不到您说的中草药哦～"
 ATTR_NOT_FOUND = u"找不到答案哦～"
@@ -19,7 +18,7 @@ output = u""
 
 
 attrs = [set() for x in xrange(ATTR_NUM)]
-with open("data/key.txt", 'rb') as infile:
+with open("data/item_synonym.txt", 'rb') as infile:
     for i in range(15):
         line = infile.readline().decode('utf-8')
         for word in line.split():

@@ -87,7 +87,7 @@ def read_next():
                 continue
             v.set(word.strip())
             yield 1
-    with open('../data/key.txt', 'wb') as outfile:
+    with open('../data/item_synonym.txt', 'wb') as outfile:
         for similars in similar_list:
             for word in similars:
                 print word
