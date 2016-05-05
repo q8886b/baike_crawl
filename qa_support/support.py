@@ -256,7 +256,6 @@ with open("../data/item_synonym.txt", 'wb') as outfile, open('../data/attribute_
 """
 
 #create synonym in mysql
-
 """
 with open("data/item_synonym.txt", 'rb') as infile:
     items = dict()
@@ -286,3 +285,16 @@ with open("data/item_synonym.txt", 'rb') as infile:
     db.close()
 """
 
+#tf-idf dictionary to normal dictionary
+
+with open("data/attribute.dic", 'rb') as infile, open("data/exchange.txt", 'wb') as outfile:
+    limit = 1e-10
+    words = []
+    for line in infile:
+        if len(line.strip()) == 0:
+            continue
+        ss = line.decode('utf-8').strip().split()
+        if float(ss[1]) > limit:
+            words.append(ss[0])
+    for word in words:
+        outfile.write(word.encode('utf-8') + '\n')

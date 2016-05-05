@@ -5,64 +5,47 @@ import MySQLdb
 import os
 import sys
 import urllib
-from qa_support.Dictionary import Dictionary
+from qa_support import divide
+from qa_support import items
+from qa_support import attributes
 
 while os.getcwd().split('/')[-1] != 'graduate':
     os.chdir("../")
 
 ATTR_NUM = 15
-ITEM_NOT_FOUND = u"找不到您说的中草药哦～"
-ATTR_NOT_FOUND = u"找不到答案哦～"
-input = urllib.unquote(sys.argv[1]).decode('utf-8')
+ITEM_NOT_FOUND = u"找不到中草药"
+ATTR_NOT_FOUND = u"找不到答案"
+if len(sys.argv) > 1:
+    input = urllib.unquote(sys.argv[1]).decode('utf-8')
+else:
+    input = u"前列腺药和六味地黄丸可以一起用吗"
 output = u""
 
 
-attrs = [set() for x in xrange(ATTR_NUM)]
-with open("data/item_synonym.txt", 'rb') as infile:
-    for i in range(15):
-        line = infile.readline().decode('utf-8')
-        for word in line.split():
-            attrs[i].add(word)
-            # print i, word
-items = set()
-with open("data/valid_items.txt", 'rb') as infile:
-    for line in infile:
-        if line == "":
-            continue
-        items.add(line.strip().decode('utf-8'))
-        # print line.strip().decode('utf-8')
+dicnames = ['data/attribute.dic', 'data/attribute_synonym.txt', 'data/valid_items.txt', 'data/item_synonym.txt',
+            'data/value.dic']
+dic = divide.Dictionary(dicnames)
+words = dic.doubleMaxMatch(input)
+print " ".join(words).encode('utf-8')
+item = items.find_item(words)
+print item.encode('utf-8')
 
-def find_item(input):
-    for item in items:
-        if input.find(item) != -1:
-            return item
-    return None
+attrs = attributes.find_attr(words)
 
-def find_attr(input):
-    idx_found = set()
-    for idx in range(ATTR_NUM):
-        for a in attrs[idx]:
-            if input.find(a) != -1:
-                idx_found.add(idx)
-                break
-    return idx_found
-
-
-item = find_item(input)
-idx_found = find_attr(input)
 if item is None:
     output = ITEM_NOT_FOUND
+elif len(attrs) == 0:
+    output = ATTR_NOT_FOUND
 else:
     db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
     cur = db.cursor()
-    sql = "select attribute, value from medicine where item = %s and attribute like %s"
+    sql = "select attribute, value from medicine_simple where item = %s and attribute = %s"
     answers = set()
-    for idx in idx_found:
-        for attr in attrs[idx]:
-            cur.execute(sql, [item.encode('utf-8'), '%'+attr.encode('utf-8')+'%'])
-            for result in cur.fetchall():
-                answers.add(result[0] + u'@' + result[1])
-    if answers == set():
+    for attr in attrs:
+        cur.execute(sql, [item.encode('utf-8'), attr.encode('utf-8')])
+        for result in cur.fetchall():
+            answers.add(result[0] + u'@' + result[1])
+    if len(answers) == 0:
         output = ATTR_NOT_FOUND
     else:
         for answer in answers:

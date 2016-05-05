@@ -4,22 +4,27 @@ import os
 
 class Dictionary:
 
-    def __init__(self, dicname):
+    def __init__(self, dicnames):
         while os.getcwd().split('/')[-1] != 'graduate':
             os.chdir("../")
-        self.dic = open(dicname, 'rb')
+        if type(dicnames) is str:
+            dicnames = [dicnames]
         self.D = set()
         self.WordMaxLength = 10
         start = time.time()
-        for line in self.dic:
-            if len(line) != 0:
-                line = line.decode('utf-8').strip()
-                self.D.add(line)
+        for dicname in dicnames:
+            dic = open(dicname, 'rb')
+            for line in dic:
+                if len(line.strip()) != 0:
+                    words = line.decode('utf-8').strip().split()
+                    for word in words:
+                        self.D.add(word)
+            dic.close()
         end = time.time()
-        print "Load sample.dic time: ", end-start, "S"
+        # print "Load dictionary time: ", end-start, "S"
 
     def __del__(self):
-        self.dic.close()
+        pass
 
     def existWord(self, word):
         return word in self.D
@@ -76,14 +81,15 @@ class Dictionary:
         for s in v2:
             if len(s) == 1:
                 single_sub -= 1
-        if single_sub >= 0:
+        if single_sub > 0:
             return v2
         else:
             return v1
 
 # test
 """
-dic = Dictionary('data/sample.dic')
+dicnames = ['data/valid_items.txt','data/sample.dic']
+dic = Dictionary(dicnames)
 with open("data/input.txt", 'rb') as infile:
     for line in infile:
         line = line.strip()
