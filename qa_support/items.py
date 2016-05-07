@@ -2,6 +2,7 @@
 import MySQLdb
 import sys
 
+
 def find_item(words):
     db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
     cur = db.cursor()

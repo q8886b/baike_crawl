@@ -18,7 +18,7 @@ ATTR_NOT_FOUND = u"找不到答案"
 if len(sys.argv) > 1:
     input = urllib.unquote(sys.argv[1]).decode('utf-8')
 else:
-    input = u"前列腺药和六味地黄丸可以一起用吗"
+    input = u"吃了保宫止血颗粒和金刚藤丸血还是不断怎么办"
 output = u""
 
 

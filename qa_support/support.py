@@ -5,6 +5,7 @@ import requests
 import re
 import MySQLdb
 import sys
+import os
 
 # original csv to clean csv
 """
@@ -286,7 +287,7 @@ with open("data/item_synonym.txt", 'rb') as infile:
 """
 
 #tf-idf dictionary to normal dictionary
-
+"""
 with open("data/attribute.dic", 'rb') as infile, open("data/exchange.txt", 'wb') as outfile:
     limit = 1e-10
     words = []
@@ -298,3 +299,31 @@ with open("data/attribute.dic", 'rb') as infile, open("data/exchange.txt", 'wb')
             words.append(ss[0])
     for word in words:
         outfile.write(word.encode('utf-8') + '\n')
+"""
+
+#create dic from 15 file
+"""
+db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
+cur = db.cursor()
+sql = "select value from medicine_simple where attribute = %s into outfile %s fields terminated by ',' "  \
+      "enclosed by '\"' lines terminated by '\n'"
+attrs_sample = [u'简介', u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
+                u'归经', u'培育', u'毒性', u'禁忌', u'文化']
+i = 0
+for attr in attrs_sample:
+    i += 1
+    cur.execute(sql, [attr.encode('utf-8'), str(i)+".txt"])
+"""
+
+#1-15 encoding transfer
+"""
+for x in range(1,16):
+    filename = str(x)
+    outname = str(x) + ".txt"
+    with open("data/" + filename, 'rb') as infile, open("data/" + outname, 'wb') as outfile:
+        for line in infile:
+            line = line.decode('utf-8').encode('gb18030')
+            outfile.write(line)
+"""
+
+
