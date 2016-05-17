@@ -2,3 +2,4 @@ workspace.xml
 *.pyc
 *.sql
 .idea/*
+data/baike_all.url
