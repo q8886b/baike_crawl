@@ -53,6 +53,7 @@ else:
             value = answer.split('@')[1]
             output += item + u"的" + attr + u": " + value + u"\n"
 print output.encode('utf-8')
+print "相关链接: " + "http://baike.baidu.com/item/" + item.encode('utf-8')
 
 
 

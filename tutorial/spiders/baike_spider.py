@@ -8,7 +8,7 @@ from tutorial.items import BaikeItem
 class BaikeSpider(scrapy.Spider):
     name = "baike"
     allowed_domains = ["baike.baidu.com"]
-    file = open("medicine.url")
+    file = open("data/medicine.url")
     start_urls = [url.strip() for url in file.readlines()]
     file.close()
 
