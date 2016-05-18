@@ -9,7 +9,7 @@ from scrapy.item import Item, Field
 from scrapy.http.request import Request
 
 class BaikeUrlSpider(scrapy.Spider):
-    name = 'baike'
+    name = 'baike_url'
     allowed_domains = ['baike.baidu.com']
     all_urls = set()
 
