@@ -27,7 +27,7 @@ class TooSimpleSpider(scrapy.Spider):
             item = response.xpath("//dd[@class='lemmaWgt-lemmaTitle-title']/h1/text()").extract()[0]
             for tag in tags:
                 if tag.strip().encode('utf-8') in self.valid_tags:
-                    print item.strip(), tag.strip(), response.url
+                    print item.strip().encode('utf-8'), tag.strip().encode('utf-8'), response.url
                     break
         else:
             print "error", response.url

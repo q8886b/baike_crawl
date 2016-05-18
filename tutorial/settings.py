@@ -29,7 +29,7 @@ DUPEFILTER_CLASS = 'scrapyjs.SplashAwareDupeFilter'
 HTTPCACHE_STORAGE = 'scrapyjs.SplashAwareFSCacheStorage'
 
 
-DOWNLOAD_TIMEOUT = 5
+# DOWNLOAD_TIMEOUT = 5
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
