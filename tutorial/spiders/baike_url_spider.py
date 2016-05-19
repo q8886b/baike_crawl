@@ -31,11 +31,11 @@ class BaikeUrlSpider(scrapy.Spider):
     # start_urls = ["http://www.baike.baidu.com/item/" + item.strip() for item in file.readlines()]
     # file.close()
     # known_urls = set(start_urls)
-    known_urls = set()
 
-    file = open("data/baike.url")
+    file = open("data/exchange.txt")
     start_urls = [url.strip() for url in file]
     file.close()
+    known_urls = set(start_urls) # contain valid url, and invalid urls
 
     def start_requests(self):
         for url in self.start_urls:
@@ -56,8 +56,10 @@ class BaikeUrlSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        url = response.meta['splash']['args']['url']
+        # url = response.meta['splash']['args']['url']
         # print url
+	url = response.url
+	"""
         omit = True
         tags = response.xpath("//span[@class='taglist']/text()").extract()
         for tag in tags:
@@ -67,22 +69,26 @@ class BaikeUrlSpider(scrapy.Spider):
                     omit = False
                 break
         self.known_urls.add(url)
+	"""
 
+	omit = False
         if omit == False:
             for href in response.xpath("//div[@class='zhixin-box']/descendant-or-self::*/a/@href").extract():
                 if href.find('http') == -1:
                     href = u'http://baike.baidu.com' + href
                 if self.url_valid(href.encode('utf-8')):
                     if href not in self.known_urls:
-                        # print href
-                        # self.known_urls.add(href.encode('utf-8'))
+                        print href
+                        self.known_urls.add(href.encode('utf-8'))
+			"""
                         yield scrapy.Request(href, self.parse, meta={
                             'splash': {
                                 'endpoint': 'render.html',
                                 'args': {'wait': 0, 'resource_timeout':1, 'image':0},
                             }
                         })
-
+			"""
+			return
 
 
 
