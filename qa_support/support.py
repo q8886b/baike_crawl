@@ -326,4 +326,12 @@ for x in range(1,16):
             outfile.write(line)
 """
 
-
+# known url and valid url append to known.url and valid.url
+with open("data/exchange.txt", 'rb') as infile, open("data/known.url", 'a') as outfile1, \
+        open("data/valid.url", 'a') as outfile2, open("data/baike.url", 'wb') as outfile3:
+    for line in infile:
+        if line.find("known") == -1:
+            outfile1.write(line[5:])
+            outfile3.write(line[5:])
+        else:
+            outfile2.write(line[11:])

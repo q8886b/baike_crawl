@@ -19,7 +19,7 @@ class BaikeUrlSpider(scrapy.Spider):
     known_urls = set([url.strip() for url in file])
     file.close()
 
-    file = open("data/valid.url")
+    file = open("data/baike.url")
     start_urls = [url.strip() for url in file]
     file.close()
 
@@ -29,6 +29,14 @@ class BaikeUrlSpider(scrapy.Spider):
 
 
     def start_requests(self):
+        with open("data/exchange.txt", 'rb') as infile, open("data/known.url", 'a') as outfile1, \
+            open("data/valid.url", 'a') as outfile2:
+            for line in infile:
+                if line.find("known") == -1:
+                    outfile2.write(line)
+                else:
+                    outfile1.write(line)
+
         for url in self.start_urls:
             yield scrapy.Request(url, self.parse, meta={
                 'splash': {
