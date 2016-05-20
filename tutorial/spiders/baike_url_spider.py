@@ -15,11 +15,11 @@ class BaikeUrlSpider(scrapy.Spider):
 
     valid_tags = ['中药', '中药材', '中成药', '草药', '中草药', '方剂', '药材', '药方', '药用植物']
 
-    file = open("data/known.url")
+    file = open("data/valid.url")
     known_urls = set([url.strip() for url in file])
     file.close()
 
-    file = open("data/baike.url")
+    file = open("data/valid.url")
     start_urls = [url.strip() for url in file]
     file.close()
 
@@ -60,11 +60,11 @@ class BaikeUrlSpider(scrapy.Spider):
                 href = u'http://baike.baidu.com' + href
             if self.url_valid(href.encode('utf-8')):
                 if href not in self.known_urls:
-                    print "new known:", href
-                    self.known_urls.add(href)
                     yield scrapy.Request(href, self.parse_valid)
 
     def parse_valid(self, response):
+        print "new known:", href
+        self.known_urls.add(href)
         url = response.url
         tags = response.xpath("//span[@class='taglist']/text()").extract()
         for tag in tags:
