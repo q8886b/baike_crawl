@@ -331,7 +331,7 @@ with open("data/exchange.txt", 'rb') as infile, open("data/known.url", 'a') as o
         open("data/valid.url", 'a') as outfile2, open("data/baike.url", 'wb') as outfile3:
     for line in infile:
         if line.find("known") == -1:
-            outfile1.write(line[5:])
+            outfile2.write(line[5:])
             outfile3.write(line[5:])
         else:
-            outfile2.write(line[11:])
+            outfile1.write(line[11:])
