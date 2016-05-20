@@ -15,11 +15,11 @@ class BaikeUrlSpider(scrapy.Spider):
 
     valid_tags = ['中药', '中药材', '中成药', '草药', '中草药', '方剂', '药材', '药方', '药用植物']
 
-    file = open("data/valid.url")
+    file = open("data/known.url")
     known_urls = set([url.strip() for url in file])
     file.close()
 
-    file = open("data/valid.url")
+    file = open("data/baike.url")
     start_urls = [url.strip() for url in file]
     file.close()
 
