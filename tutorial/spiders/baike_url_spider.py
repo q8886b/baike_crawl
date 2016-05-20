@@ -63,8 +63,8 @@ class BaikeUrlSpider(scrapy.Spider):
                     yield scrapy.Request(href, self.parse_valid)
 
     def parse_valid(self, response):
-        print "new known:", href
-        self.known_urls.add(href)
+        print "new known:", response.url
+        self.known_urls.add(response.url)
         url = response.url
         tags = response.xpath("//span[@class='taglist']/text()").extract()
         for tag in tags:
