@@ -45,9 +45,10 @@ class MySQLPipeline(object):
         if item['item'] == 'error.html' or item['value'] == "":
             return
         else:
-            sql = "INSERT INTO medicine VALUES ('%s','%s','%s')" % (item['item'], item['attribute'], item['value'])
+            sql = "INSERT INTO medicine_expand VALUES ('%s','%s','%s')" % (item['item'], item['attribute'], item['value'])
+            sql = "INSERT INTO medicine_expand VALUES (%s,%s,%s)"
             # print "sql: " + sql
-            result = tx.execute(sql)
+            result = tx.execute(sql, [item['item'], item['attribute'], item['value']])
             if result > 0:
                 self.stats.inc_value('database/items_added')
 

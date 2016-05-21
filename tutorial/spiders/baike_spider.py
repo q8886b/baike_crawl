@@ -8,14 +8,28 @@ from tutorial.items import BaikeItem
 class BaikeSpider(scrapy.Spider):
     name = "baike"
     allowed_domains = ["baike.baidu.com"]
-    file = open("data/medicine.url")
+    file = open("data/valid.url")
     start_urls = [url.strip() for url in file.readlines()]
+    valid_tags = ['中药', '中药材', '中成药', '草药', '中草药', '方剂', '药材', '药方', '药用植物']
     file.close()
 
     def parse(self, response):
+        polysemants = response.xpath("//li[@class='item']/a").extract()
+        poly_urls = response.xpath("//li[@class='item']/a/@href").extract()
+        for i in range(0, len(polysemants)):
+            if polysemants[i].encode('utf-8') in self.valid_tags:
+                print "Jump with:", polysemants[i].encode('utf-8')
+                href = u'http://baike.baidu.com' + poly_urls[i]
+                yield scrapy.Request(href, self.parse)
+                return
+
         item = BaikeItem()
-        item['item'] = urllib.unquote(response.request.meta['redirect_urls'][0].split('/')[-1])
-        print item['item']
+        # item['item'] = urllib.unquote(response.request.meta['redirect_urls'][0].split('/')[-1])
+        # print item['item']
+        title = response.xpath("//dd[@class='lemmaWgt-lemmaTitle-title']/h1/text()").extract()
+        if len(title) != 0:
+            item['item'] = title[0].encode('utf-8')
+            print item['item'], response.url
 
         suffix1 = "/descendant-or-self::*/text()"
         suffix2 = "/text()"
@@ -92,7 +106,6 @@ class BaikeSpider(scrapy.Spider):
                                         remove_white("".join(title_data)).encode('utf-8')
                     item['value'] = remove_white("".join(value_data)).encode('utf-8')
                     yield item
-
         #onlyPara
         if key_num == 0:
             onlyPara = "//div[@label-module='para']"
@@ -100,5 +113,5 @@ class BaikeSpider(scrapy.Spider):
             # print remove_white("".join(onlyPara_data)).encode('utf-8')
             item['attribute'] = '资料'
             item['value'] = remove_white("".join(onlyPara_data)).encode('utf-8')
-            yield item
+            yield item   #don't know why this line take effect even comment it!
 
