@@ -3,3 +3,4 @@ workspace.xml
 *.sql
 .idea/*
 data/error.log
+offline_html/*

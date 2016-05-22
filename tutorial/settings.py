@@ -23,19 +23,16 @@ DB_DB = 'graduate'
 
 LOG_LEVEL = 'INFO'
 
-SPLASH_URL = 'http://localhost:8050/'
-
-DUPEFILTER_CLASS = 'scrapyjs.SplashAwareDupeFilter'
-HTTPCACHE_STORAGE = 'scrapyjs.SplashAwareFSCacheStorage'
-
-
+# SPLASH_URL = 'http://localhost:8050/'
+# DUPEFILTER_CLASS = 'scrapyjs.SplashAwareDupeFilter'
+# HTTPCACHE_STORAGE = 'scrapyjs.SplashAwareFSCacheStorage'
 # DOWNLOAD_TIMEOUT = 5
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-# CONCURRENT_REQUESTS=32
+CONCURRENT_REQUESTS=1
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
@@ -67,7 +64,7 @@ HTTPCACHE_STORAGE = 'scrapyjs.SplashAwareFSCacheStorage'
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
    #'tutorial.middlewares.MyCustomDownloaderMiddleware': 543,
-   'scrapyjs.SplashMiddleware': 725,
+   #'scrapyjs.SplashMiddleware': 725,
 }
 
 # Enable or disable extensions
@@ -79,7 +76,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'tutorial.pipelines.MySQLPipeline': 300,
+   #'tutorial.pipelines.MySQLPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

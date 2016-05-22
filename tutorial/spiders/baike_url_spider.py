@@ -27,7 +27,6 @@ class BaikeUrlSpider(scrapy.Spider):
     valid_urls = set([url.strip() for url in file])
     file.close()
 
-
     def start_requests(self):
         with open("data/exchange.txt", 'rb') as infile, open("data/known.url", 'a') as outfile1, \
             open("data/valid.url", 'a') as outfile2:
