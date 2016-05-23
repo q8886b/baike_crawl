@@ -22,6 +22,9 @@ class TFDictionary:
             if (self.D.has_key(word)):
                 tf_value += self.D[word]
         return tf_value
+    def exist(self, word):
+        return self.D.has_key(word)
+
 
 def find_attr(words):
     #find keyword from table attribute
@@ -48,9 +51,9 @@ def find_attr(words):
         max_index = values.index(max(values))
         attrs.add(attrs_sample[max_index])
         values_copy = values
+        print max(values)
         for i in range(0,15):
             values_copy[i] = str(values_copy[i])
-        print max(values)
         print " ".join(values_copy)
 
 

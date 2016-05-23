@@ -18,19 +18,24 @@ ATTR_NOT_FOUND = u"找不到答案"
 if len(sys.argv) > 1:
     input = urllib.unquote(sys.argv[1]).decode('utf-8')
 else:
-    input = u"吃了保宫止血颗粒和金刚藤丸血还是不断怎么办"
+    input = u"感冒发烧功效"
 output = u""
 
 
+#1 分词
 dicnames = ['data/attribute.dic', 'data/attribute_synonym.txt', 'data/valid_items.txt', 'data/item_synonym.txt',
             'data/value.dic']
 dic = divide.Dictionary(dicnames)
 words = dic.doubleMaxMatch(input)
 print " ".join(words).encode('utf-8')
-item = items.find_item(words)
+
+#2 找属性
+attrs = attributes.find_attr(words)
+
+#3 确定命名实体
+item = items.find_item(words, attrs)
 print item.encode('utf-8')
 
-attrs = attributes.find_attr(words)
 
 if item is None:
     output = ITEM_NOT_FOUND

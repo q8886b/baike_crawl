@@ -327,6 +327,7 @@ for x in range(1,16):
 """
 
 # known url and valid url append to known.url and valid.url
+"""
 with open("data/exchange.txt", 'rb') as infile, open("data/known.url", 'a') as outfile1, \
         open("data/valid.url", 'a') as outfile2, open("data/baike.url", 'wb') as outfile3:
     for line in infile:
@@ -335,3 +336,18 @@ with open("data/exchange.txt", 'rb') as infile, open("data/known.url", 'a') as o
             outfile3.write(line[5:])
         else:
             outfile1.write(line[11:])
+"""
+
+# see different between two item file
+
+"""
+with open("data/valid_items.txt", 'rb') as file1, open("data/item_expand.txt", 'rb') as file2:
+    s1 = set([line.strip() for line in file1])
+    s2 = set([line.strip() for line in file2])
+    for item in s1:
+        if item not in s2:
+            print "invalid:", item
+    for item in s2:
+        if item not in s1:
+            print "new:", item
+"""
