@@ -35,7 +35,7 @@ def find_attr(words):
     for word in words:
         cur.execute(sql, [word.encode('utf-8')])
         for row in cur:
-            print word.encode('utf-8'), row[0].encode('utf-8')
+            # print word.encode('utf-8'), row[0].encode('utf-8')
             attrs.add(row[0])
     #if no attribute keyword found
     attrs_sample = [u'简介', u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
@@ -51,13 +51,10 @@ def find_attr(words):
         max_index = values.index(max(values))
         attrs.add(attrs_sample[max_index])
         values_copy = values
-        print max(values)
+        # print max(values)
         for i in range(0,15):
             values_copy[i] = str(values_copy[i])
-        print " ".join(values_copy)
+        # print " ".join(values_copy)
 
-
-    for attr in attrs:
-        print attr.encode('utf-8')
     return attrs
 

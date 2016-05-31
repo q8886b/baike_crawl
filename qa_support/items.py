@@ -44,7 +44,10 @@ def find_item(words, attrs):
                     item_weight[row[0]] = 0.0
     # for k, v in item_weight.iteritems():
     #     print k, v
-    return max(item_weight, key=item_weight.get)
+    if len(item_weight) == 0:
+        return None
+    else:
+        return max(item_weight, key=item_weight.get)
 
         # print find_item([u"今天", u"天气", u"过山龙", u"蛇咬子", u"麻黄"])
 # print find_item([u"今天", u"天气", u"过山龙", u"蛇咬子"])
