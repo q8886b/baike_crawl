@@ -41,7 +41,7 @@ def find_item(words, attrs):
                 if item_weight.has_key(row[0]):
                     item_weight[row[0]] += tfdic.cal([word])
                 else:
-                    item_weight[row[0]] = 0.0
+                    item_weight[row[0]] = tfdic.cal([word])
     # for k, v in item_weight.iteritems():
     #     print k, v
     if len(item_weight) == 0:

@@ -45,6 +45,8 @@ class BaikeSpider():
         self.db.close()
 
     def start_requests(self):
+        pass
+        """
         for i in range(self.idx, 22969):
             path = "offline_html/" + str(i) + ".html"
             file = open(path, 'rb')
@@ -62,6 +64,7 @@ class BaikeSpider():
             except Exception, exc:
                 pass
             signal.alarm(0)
+        """
 
     def parse_offline(self, response):
         polysemants = response.xpath("//li[@class='item']/a/text()").extract()
