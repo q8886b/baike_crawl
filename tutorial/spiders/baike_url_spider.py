@@ -81,7 +81,7 @@ class BaikeUrlSpider(scrapy.Spider):
             if tag.strip().encode('utf-8') in self.valid_tags:
                 print "n v:", url
                 return
-
+        """
         #2 see whether content is right
         remove_white = lambda s: re.sub(r"\s+", "", s, flags=re.UNICODE)
         def k_parse(total):
@@ -117,6 +117,7 @@ class BaikeUrlSpider(scrapy.Spider):
         if float(valid)/total > 0.8:
             print "n v:", url
         return
+        """
 
 
 
