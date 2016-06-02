@@ -25,7 +25,7 @@ class BaikeSpider():
     file.close()
     db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
     cur = db.cursor()
-    sql = "INSERT INTO medicine_expand VALUES (%s,%s,%s)"
+    sql = "INSERT IGNORE INTO medicine_expand VALUES (%s,%s,%s)"
     duplicates = set()
     items = set()
 
@@ -125,6 +125,7 @@ class BaikeSpider():
                 item['value'] = remove_white("".join(value_data)).encode('utf-8')
                 self.db_write(item)
             else:
+                item['value'] = ""
                 for j in range(1, title_num+1):
                     intersect = lambda upper, lower : upper + "[count(.|" + lower + ") = count(" + lower + ")]"
                     title_data = response.xpath(f_title(i) + f_num(j) +  suffix2).extract()
@@ -143,10 +144,10 @@ class BaikeSpider():
                         break
                     # print remove_white("".join(title_data)).encode('utf-8')
                     # print remove_white("".join(value_data)).encode('utf-8')
-                    item['attribute'] = remove_white("".join(key_data)).encode('utf-8')
-                    item['value'] = "$key$" + remove_white("".join(title_data)).encode('utf-8') + "\n" \
-                                    + "$value$" + remove_white("".join(value_data)).encode('utf-8') + "\n"
-                self.db_write(item)
+                    item['attribute'] = remove_white("".join(key_data)).encode('utf-8') + \
+                        remove_white("".join(title_data)).encode('utf-8')
+                    item['value'] = remove_white("".join(value_data)).encode('utf-8')
+                    self.db_write(item)
 
         # basicInfo
         basic_key_left = "//dl[@class='basicInfo-block basicInfo-left']/dt[@class='basicInfo-item name']"
