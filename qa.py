@@ -18,7 +18,7 @@ ATTR_NOT_FOUND = u"找不到答案"
 if len(sys.argv) > 1:
     input = urllib.unquote(sys.argv[1]).decode('utf-8')
 else:
-    input = u"三叶草治什么的"
+    input = u"六味地黄丸副作用"
 output = u""
 
 

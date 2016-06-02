@@ -321,23 +321,35 @@ def get_value_from_15_attributes():
     cur = db.cursor()
     sql = "select value from medicine_simple where attribute = %s into outfile %s fields terminated by ',' "  \
           "enclosed by '\"' lines terminated by '\n'"
-    attrs_sample = [u'简介', u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
-                    u'归经', u'培育', u'毒性', u'禁忌', u'文化']
+    attrs_sample = [u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
+                    u'归经', u'培育', u'毒性', u'禁忌']
     i = 0
     for attr in attrs_sample:
         i += 1
-        cur.execute(sql, [attr.encode('utf-8'), str(i)+".txt"])
+        cur.execute(sql, [attr.encode('utf-8'), str(i)])
 
 #11 1-15 encoding transfer
-def file_encode_gb18030():
-    for x in range(1,16):
-        filename = str(x)
-        outname = str(x) + ".txt"
-        with open("data/" + filename, 'rb') as infile, open("data/" + outname, 'wb') as outfile:
-            for line in infile:
-                line = line.decode('utf-8').encode('gb18030')
-                outfile.write(line)
-
+def file_encode_gb18030(back=False):
+    if back is False:
+        for x in range(1,14):
+            filename = str(x)
+            outname = str(x) + ".txt"
+            with open("data/" + filename, 'rb') as infile, open("data/" + outname, 'wb') as outfile:
+                for line in infile:
+                    line = line.decode('utf-8').encode('gb18030')
+                    outfile.write(line)
+    else:
+        for x in range(1, 14):
+            filename = str(x) + ".dic"
+            outname = str(x) + ".txt"
+            with open("data/" + filename, 'rb') as infile, open("data/" + outname, 'wb') as outfile:
+                for line in infile:
+                    line = line.decode('gb18030').encode('utf-8')
+                    outfile.write(line)
+            with open("data/" + outname, 'rb') as infile, open("data/" + filename, 'wb') as outfile:
+                for line in infile:
+                    outfile.write(line)
+file_encode_gb18030(back=True)
 #12 known url and valid url append to known.url and valid.url
 def url_spider_exchange_to_url():
     with open("data/exchange.txt", 'rb') as infile, open("data/known.url", 'a') as outfile1, \

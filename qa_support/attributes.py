@@ -38,13 +38,15 @@ def find_attr(words):
             # print word.encode('utf-8'), row[0].encode('utf-8')
             attrs.add(row[0])
     #if no attribute keyword found
-    attrs_sample = [u'简介', u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
-                    u'归经', u'培育', u'毒性', u'禁忌', u'文化']
+    #attrs_sample = [u'简介', u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
+    #                u'归经', u'培育', u'毒性', u'禁忌', u'文化']
+    attrs_sample = [u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
+                    u'归经', u'培育', u'毒性', u'禁忌']
     while os.getcwd().split('/')[-1] != 'graduate':
         os.chdir("../")
     if len(attrs) == 0:
         values = []
-        for i in range(1, 16):
+        for i in range(0, 13):
             filename = "data/" + str(i) + ".dic"
             tfdic = TFDictionary(filename)
             values.append(tfdic.cal(words))
@@ -52,7 +54,7 @@ def find_attr(words):
         attrs.add(attrs_sample[max_index])
         values_copy = values
         # print max(values)
-        for i in range(0,15):
+        for i in range(0,13):
             values_copy[i] = str(values_copy[i])
         # print " ".join(values_copy)
 
