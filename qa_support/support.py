@@ -71,7 +71,37 @@ def list_duplicate():
             print s
 
 #6 database get attribute from value, doing further excavation
-def excavate_attribute_from_value():
+def excavate_attribute_from_value(table = "medicine_expand"):
+
+    #deal with $key$-$value pair in database
+    db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
+    cur1 = db.cursor()
+    cur2 = db.cursor()
+    sql1 = 'select * from ' + table + ' where value like %s'
+    sql2 = 'insert into ' + table + ' values(%s, %s, %s)'
+    sql3 = 'delete from ' + table + ' where item=%s and attribute=%s'
+
+    cur1.execute(sql1, ['%$key$%'])
+    for row in cur1:
+        key = 0
+        value = 0
+        M = {}
+        for line in row[2].split('\n'):
+            if line.find('$key$') != -1:
+                key = line[5:]
+            if line.find('$value$') != -1:
+                value = line[7:]
+                print key, value
+                cur2.execute(sql2, [row[0].encode('utf-8'), row[1].encode('utf-8')+key.encode('utf-8'),
+                                    value.encode('utf-8')])
+                db.commit()
+        cur2.execute(sql3, [row[0].encode('utf-8'), row[1]])
+        db.commit()
+    cur1.close()
+    cur2.close()
+    db.close()
+
+    # get k-v from value in the form of [key] value
     def kv_parse(total):
         rsuit = u"【[^】]*】[^【]*"
         sl = re.findall(rsuit, total, re.UNICODE)
@@ -90,8 +120,8 @@ def excavate_attribute_from_value():
                 return True
         return False
 
-    with open("../data/kv_in_value.txt", 'rb') as infile, open("../data/kv_in_value_output.csv", 'wb') as outfile, \
-            open("../data/attribute_key.txt", 'rb') as keyfile:
+    with open("data/kv_in_value.txt", 'rb') as infile, open("data/kv_in_value_output.csv", 'wb') as outfile, \
+            open("data/attribute_synonym.txt", 'rb') as keyfile:
         # 1 keys
         keys = set()
         for line in keyfile:
@@ -104,7 +134,7 @@ def excavate_attribute_from_value():
         # 3 mysql
         db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
         cur = db.cursor()
-        cur.execute('select * from medicine')
+        cur.execute('select * from ' + table)
         row = cur.fetchone()
         for line in infile:
             line = line.decode('utf-8')
@@ -113,7 +143,7 @@ def excavate_attribute_from_value():
                 m = kv_parse(sl[2])
                 for k, v in m.iteritems():
                     if k_in_keys(k, keys):
-                        sql = "delete from medicine where item = %s and attribute = %s;"
+                        sql = "delete from " + table + " where item = %s and attribute = %s;"
                         cur.execute(sql, [sl[0].encode('utf-8'), sl[1].encode('utf-8')])
                         db.commit()
                         writeline = [sl[0].encode('utf-8'), k.encode('utf-8'), v.encode('utf-8')]
@@ -123,11 +153,11 @@ def excavate_attribute_from_value():
         cur.close()
         db.close()
 
-    with open("../data/kv_in_value_output.csv", 'rb') as infile:
+    with open("data/kv_in_value_output.csv", 'rb') as infile:
         db = MySQLdb.connect(host='localhost', user='root', passwd='123456', db='graduate', charset='utf8')
         cur = db.cursor()
         spamreader = csv.reader(infile, delimiter=',',quotechar='"')
-        sql = "insert into medicine values (%s, %s, %s)"
+        sql = "insert ignore into " + table + " values (%s, %s, %s)"
         D = ["一", "二", "三", "四", "五", "六"]
         keys = []
         for line in spamreader:
@@ -141,7 +171,6 @@ def excavate_attribute_from_value():
         cur.close()
         db.close()
 
-
 #6 export to table medicine_simple, create table attribute_set
 #6 attribute sample: 1简介　2功用　3制备　4用法　5别名　６性味　７来源　８鉴定　９生态环境  10成分
 #6                   11归经 12培育 13毒性 14禁忌 15文化
@@ -151,7 +180,7 @@ def create_table_medicine_simple_and_attributes():
     cur_w = db.cursor()
     ATTR_NUM = 15
     attrs = [set() for x in xrange(ATTR_NUM)]
-    with open("../data/attribute_key.txt", 'rb') as infile:
+    with open("data/attribute_synonym.txt", 'rb') as infile:
         for i in range(15):
             line = infile.readline().decode('utf-8')
             for word in line.split():
@@ -199,7 +228,7 @@ def create_table_medicine_simple_and_attributes():
 
 #7 create synonym
 def create_synonym_txt():
-    with open("../data/item_synonym.txt", 'wb') as outfile, open('../data/attribute_key.txt', 'rb') as keyfile:
+    with open("data/item_synonym.txt", 'wb') as outfile, open('data/attribute_key.txt', 'rb') as keyfile:
         keys = set()
         for line in keyfile:
             line = line.decode('utf-8')
