@@ -18,7 +18,7 @@ ATTR_NOT_FOUND = u"找不到答案"
 if len(sys.argv) > 1:
     input = urllib.unquote(sys.argv[1]).decode('utf-8')
 else:
-    input = u"六味地黄丸副作用"
+    input = u"如何治糖尿病"
 output = u""
 
 
@@ -60,7 +60,8 @@ else:
             value = answer.split('@')[1]
             output += item + u"的" + attr + u": " + value + u"\n"
 print output.encode('utf-8')
-print "相关链接: " + "http://baike.baidu.com/item/" + item.encode('utf-8')
+if item is not None:
+    print "相关链接: " + "http://baike.baidu.com/item/" + item.encode('utf-8')
 
 
 

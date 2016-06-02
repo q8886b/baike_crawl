@@ -22,8 +22,8 @@ def find_item(words, attrs):
             return row[0]
     #3 find item from attribute
     sql = 'select distinct item from medicine_simple where attribute = %s and value like %s'
-    attrs_sample = [u'简介', u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
-                    u'归经', u'培育', u'毒性', u'禁忌', u'文化']
+    attrs_sample = [u'功用', u'制备', u'用法', u'别名', u'性味', u'来源', u'鉴定', u'生态环境', u'成分',
+                    u'归经', u'培育', u'毒性', u'禁忌']
     item_weight = dict()
     while os.getcwd().split('/')[-1] != 'graduate':
         os.chdir("../")
@@ -38,6 +38,7 @@ def find_item(words, attrs):
         for word in valid_words:
             cur.execute(sql, [attr, '%'+word.encode('utf-8')+'%'])
             for row in cur:
+                # print row[0], tfdic.cal([word])
                 if item_weight.has_key(row[0]):
                     item_weight[row[0]] += tfdic.cal([word])
                 else:
