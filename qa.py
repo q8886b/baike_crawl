@@ -18,25 +18,31 @@ ATTR_NOT_FOUND = u"找不到答案"
 if len(sys.argv) > 1:
     input = urllib.unquote(sys.argv[1]).decode('utf-8')
 else:
-    input = u"如何治糖尿病"
+    input = u"如何治感冒"
 output = u""
 
+try:
+    #1 分词
+    dicnames = ['data/attribute.dic' ,'data/attribute_synonym.txt', 'data/valid_items.txt', 'data/item_synonym.txt',
+                'data/value.dic']
+    dic = divide.Dictionary(dicnames)
+    words = dic.doubleMaxMatch(input)
+    print " ".join(words).encode('utf-8')
 
-#1 分词
-dicnames = ['data/attribute.dic', 'data/attribute_synonym.txt', 'data/valid_items.txt', 'data/item_synonym.txt',
-            'data/value.dic']
-dic = divide.Dictionary(dicnames)
-words = dic.doubleMaxMatch(input)
-# print " ".join(words).encode('utf-8')
 
-#2 找属性
-attrs = attributes.find_attr(words)
-# for attr in attrs:
-#     print attr.encode('utf-8')
+    #2 找属性
+    attrs = attributes.find_attr(words)
+    # for attr in attrs:
+    #     print attr.encode('utf-8')
 
-#3 确定命名实体
-item = items.find_item(words, attrs)
-# print item.encode('utf-8')
+
+    #3 确定命名实体
+    item = items.find_item(words, attrs)
+    # print item.encode('utf-8')
+except:
+    for info in sys.exc_info():
+        print info
+
 
 
 if item is None:
