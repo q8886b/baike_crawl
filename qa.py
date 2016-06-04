@@ -27,7 +27,7 @@ try:
                 'data/value.dic']
     dic = divide.Dictionary(dicnames)
     words = dic.doubleMaxMatch(input)
-    print " ".join(words).encode('utf-8')
+    # print " ".join(words).encode('utf-8')
 
 
     #2 找属性
