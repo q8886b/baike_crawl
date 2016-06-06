@@ -171,7 +171,7 @@ def excavate_attribute_from_value(table = "medicine_expand"):
         cur.close()
         db.close()
 
-#6 export to table medicine_simple, create table attribute_set
+#6 export to table medicine_simple, create table attribute
 #6 attribute sample: 1简介　2功用　3制备　4用法　5别名　６性味　７来源　８鉴定　９生态环境  10成分
 #6                   11归经 12培育 13毒性 14禁忌 15文化
 def create_table_medicine_simple_and_attributes():
@@ -228,7 +228,7 @@ def create_table_medicine_simple_and_attributes():
 
 #7 create synonym
 def create_synonym_txt():
-    with open("data/item_synonym.txt", 'wb') as outfile, open('data/attribute_key.txt', 'rb') as keyfile:
+    with open("data/item_synonym.txt", 'wb') as outfile, open('data/attribute_synonym.txt', 'rb') as keyfile:
         keys = set()
         for line in keyfile:
             line = line.decode('utf-8')
